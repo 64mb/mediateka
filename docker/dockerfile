@@ -1,0 +1,29 @@
+FROM php:7
+
+RUN apt-get clean
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    libzip-dev \
+    zip \
+    libpng-dev \
+    libwebp-dev \
+    libjpeg62-turbo-dev \
+    libxpm-dev \
+    phpunit
+
+RUN rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure zip \
+    && docker-php-ext-install zip
+
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www
+
+COPY composer.* .
+
+RUN composer install
+

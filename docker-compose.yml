@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+    api:
+        build:
+            context: ./
+            dockerfile: ./docker/dockerfile
+        working_dir: /var/www
+        command: php -S 0.0.0.0:8080 -t public_html
+        environment:
+            - MYSQL_USER=${MYSQL_USER:?lost MYSQL_USER variable}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD:?lost MYSQL_PASSWORD variable}
+        ports:
+            - 8080:8080
+        volumes:
+            - .:/var/www
+            - api_log:/var/www/logs
+            - api_vendor:/var/www/vendor
+        networks:
+            - local
+    
+    mysql_database:
+        image: mysql:8.0.22
+        container_name: mysql_database
+        restart: unless-stopped
+        environment:
+            - MYSQL_DATABASE=db
+            - MYSQL_USER=${MYSQL_USER:?lost MYSQL_USER variable}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD:?lost MYSQL_PASSWORD variable}
+            - MYSQL_ROOT_PASSWORD=rootroot
+            # - MYSQL_RANDOM_ROOT_PASSWORD=true
+        volumes:
+            - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - mysql_database_data:/var/lib/mysql
+        ports:
+            - 3306:3306
+        networks:
+            - local
+
+networks:
+    local:
+        driver: bridge
+    web:
+        driver: bridge
+
+volumes:
+    api_log:
+    api_vendor:
+    mysql_database_data:

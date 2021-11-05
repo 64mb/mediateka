@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Медиатека</title>
+    <link rel="stylesheet" href="css/uikit.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="plyr/plyr.css"/>
+</head>
+
+<body>
+<nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+
+        <a class="uk-navbar-item uk-logo" href="#">
+            <span class="uk-icon uk-margin-small-right" uk-icon="icon: video-camera; ratio: 2"></span>Медиатека</a>
+        <ul uk-tab="connect: #tabs" class="uk-navbar-nav">
+            <li>
+                <a href="#">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: tag"></span>
+                    Категории
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: cloud-upload"></span>
+                    Загрузка файла
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: database"></span>
+                    Видеофайлы
+                </a>
+            </li>
+        </ul>
+        <a href="/admin_logout" class="button_logout">
+            <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span>
+            Выход
+        </a>
+    </div>
+</nav>
+<ul id="tabs" class="uk-switcher uk-margin">
+    <li>
+        <div>
+            <button class="uk-button uk-button-default" href="#modal-add-category" uk-toggle>
+                <span class="uk-icon uk-margin-small-right" uk-icon="icon: plus"></span>Добавить категорию
+            </button>
+            <ul id="categories-list" class="uk-list uk-list-striped uk-list-large categories">
+            </ul>
+        </div>
+    </li>
+    <li>
+        <div class="upload-div">
+            <div class="uk-margin">
+                <div class="uk-child-width-expand@s" uk-grid>
+                    <div class="add-fields">
+                        <div class="uk-form-label">Название фильма:</div>
+                        <input name="film_name" class="uk-input" type="text"
+                         placeholder="Название фильма">
+                        <div class="uk-form-label inline-input inline-double-label">Описание:</div>
+                        <textarea name="film_about" class="uk-textarea" rows="2" placeholder="Введите описание"></textarea>
+                        <div class="uk-form-label">Возрастные ограничения:</div>
+                        <input name="film_age" class="uk-input" type="text"
+                         placeholder="Введите возраст">
+                        <div class="uk-form-label">Год выпуска:</div>
+                        <input name="film_year" class="uk-input" type="text"
+                         placeholder="Введите год">
+                        <div class="uk-form-label">Режиссер:</div>
+                        <input name="film_director" class="uk-input" type="text"
+                         placeholder="Введите имя режиссера">
+                        <div class="uk-form-label">Сценарист:</div>
+                        <input name="film_scenario" class="uk-input" type="text"
+                         placeholder="Введите имя сценариста">
+                        <div class="uk-form-label">Страна:</div>
+                        <input name="film_country" class="uk-input" type="text"
+                         placeholder="Введите страну">
+                        <div class="uk-form-label">Продолжительность:</div>
+                        <input name="film_time" class="uk-input" type="text"
+                         placeholder="Введите длительность в минутах">
+                    </div>
+                    <div class="add-fields">
+                        <div class="uk-form-label">Категории:</div>
+                        <select name="category_id" id="category-select" class="uk-select">
+                        </select>
+                        <div class="uk-input category-box" id="category-selected">
+                        </div>
+                        <div class="uk-form-label inline-input inline-double-label">В главных ролях:</div>
+                        <textarea name="film_actors" class="uk-textarea" rows="2"
+                             placeholder="Введите ключевых актеров"></textarea>
+                        <div class="uk-form-label inline-input inline-double-label">Награды:</div>
+                        <textarea name="film_awards" class="uk-textarea" rows="2" placeholder="Введите награды"></textarea>
+                        <div class="uk-form-label">Загрузить обложку:</div>
+                        <div class="js-upload" uk-form-custom>
+                            <input type="file" accept="image/jpeg,image/png,image/jpg">
+                            <div class="uk-float-left">
+                                <button class="uk-button uk-button-default" type="button">
+                                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: image"></span>Открыть изображение
+                                </button>
+                                <progress id="image-progress" hidden class="uk-progress" value="0" max="100"></progress>
+                                <div id="image-name-view" hidden>
+                                    <span class="uk-icon uk-margin-small-right" uk-icon="icon: server"></span>
+                                    <span id="image-name">Имя файла</span>
+                                </div>
+                            </div>
+                            <div><img id="main-image" data-src="/" height="100px" uk-img></div>
+
+                        </div>
+                        <div id="dropzone-view" hidden>
+                            <div class="uk-form-label">Прикрепить медиафайл:</div>
+                            <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                                <label><input class="uk-radio" onclick="radio_video(this)" type="radio" data-radio="radio-upload"
+                                            name="radio_1" checked> Загрузить файл</label>
+                                <label><input class="uk-radio" onclick="radio_video(this)" type="radio" data-radio="radio-select"
+                                            name="radio_1"> Выбрать на сервере</label>
+                            </div>
+                            <div id="video-select" hidden>
+                                <select id="video-selector" class="uk-select">
+                                </select>
+                                <button id="button-force-video" type="button" onclick="force_add_video()"
+                                        class="uk-button uk-button-default">
+                                    СОЗДАТЬ МЕДИАФАЙЛ
+                                </button>
+                            </div>
+                            <div id="dropzone-upload" class="dropzone-div">
+                                <form action="/upload_video" class="dropzone" id="my-awesome-dropzone">
+                                    <progress id="upload-progress" class="uk-progress" value="0" max="100"></progress>
+                                    <input id="input-image-name" name="image_file" hidden>
+                                    <input id="input-categories" name="film_categories" hidden>
+                                    <div id="add-fields-form" hidden></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div>
+            <ul id="movies-list" class="uk-list uk-list-striped uk-list-large movies">
+            </ul>
+        </div>
+    </li>
+</ul>
+
+<!--МОДАЛЬНОЕ ОКНО-->
+<div id="modal-add-category" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">Добавить категорию</h2>
+        </div>
+        <form action="/add_category" method="POST">
+            <div class="uk-modal-body">
+                <div class="uk-margin">
+                    <input name="name" class="uk-input" type="text" placeholder="Название категории">
+                </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-primary" type="submit"><span class="uk-icon uk-margin-small-right"
+                                                                                uk-icon="icon: plus-circle"></span>ДОБАВИТЬ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--МОДАЛЬНОЕ ОКНО УСПЕШНОЙ ЗАГРУЗКИ-->
+<div id="modal-success" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Загрузка завершена</h2>
+        <p>Загрузка фильма успешно заврешена!</p>
+        <div class="uk-text-center">
+            <button onclick="window.location='/';" class="uk-button uk-button-primary uk-modal-close" type="button">
+                ОК
+            </button>
+        </div>
+    </div>
+</div>
+
+<!--МОДАЛЬНОЕ ОКНО УСПЕШНОГО ОБНОВЛЕНИЯ-->
+<div id="modal-success-update" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Обновление завершено</h2>
+        <p>Обновление информации о фильме успешно заврешено!</p>
+        <div class="uk-text-center">
+            <button onclick="window.location='/';" class="uk-button uk-button-primary uk-modal-close" type="button">
+                ОК
+            </button>
+        </div>
+    </div>
+</div>
+
+<!--МОДАЛЬНОЕ ОКНО ВИДЕО-->
+<div id="modal-video" uk-modal>
+    <div class="uk-modal-dialog uk-width-auto" style="max-width: 600px !important;">
+        <video id="player" playsinline controls>
+            <source id="video-source" src="" type="video/mp4">
+        </video>
+    </div>
+</div>
+
+<!--МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ФИЛЬМА-->
+<div id="modal-edit-video" uk-modal>
+    <div class="uk-modal-dialog">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h2 id="modal-video-title" class="uk-modal-title">Название</h2>
+        </div>
+        <div class="uk-modal-body">
+            <div class="uk-child-width-expand@s" uk-grid>
+                <div class="add-modal-fields">
+                    <div class="uk-form-label">Название фильма:</div>
+                    <input name="name_film" class="uk-input" type="text"
+                        placeholder="Название фильма">
+                    <div class="uk-form-label inline-input inline-double-label">Описание:</div>
+                    <textarea name="descipt_film" class="uk-textarea" rows="2" placeholder="Введите описание"></textarea>
+                    <div class="uk-form-label">Возрастные ограничения:</div>
+                    <input name="age_film" class="uk-input" type="text"
+                        placeholder="Введите возраст">
+                    <div class="uk-form-label">Год выпуска:</div>
+                    <input name="year_film" class="uk-input" type="text"
+                        placeholder="Введите год">
+                    <div class="uk-form-label">Режисер:</div>
+                    <input name="director_film" class="uk-input" type="text"
+                        placeholder="Введите имя режисера">
+                    <div class="uk-form-label">Сценарист:</div>
+                    <input name="scenarist_film" class="uk-input" type="text"
+                        placeholder="Введите имя сценариста">
+                    <div class="uk-form-label">Страна:</div>
+                    <input name="counrty_film" class="uk-input" type="text"
+                        placeholder="Введите страну">
+                </div>
+                <div class="add-modal-fields">
+                    <!--                        <div name="film_name" class="uk-form-label">Категории:</div>-->
+                    <!--                        <select name="category_id" id="category-select" class="uk-select">-->
+                    <!--                        </select>-->
+                    <!--                        <div class="uk-input category-box" id="category-selected">-->
+                    <!--                        </div>-->
+                    <div class="uk-form-label inline-input inline-double-label">В главных ролях:</div>
+                    <textarea name="actors_film" class="uk-textarea" rows="2"
+                           placeholder="Введите ключевых актеров"></textarea>
+                    <div class="uk-form-label inline-input inline-double-label">Награды:</div>
+                    <textarea name="awards_film" class="uk-textarea" rows="2" placeholder="Введите награды"></textarea>
+                    <div class="uk-form-label">Продолжительность:</div>
+                    <input name="minutes_film" class="uk-input" type="text"
+                        placeholder="Длительность в минутах">
+                    <div class="uk-form-label">Прикрепить медиафайл:</div>
+                    <select name="film_path" id="modal-video-selector" class="uk-select">
+                    </select>
+                    <div class="uk-form-label">Сменить обложку:</div>
+                    <div class="modal-image-js-upload" uk-form-custom>
+                        <input type="file" accept="image/jpeg,image/png,image/jpg">
+                        <input id="modal-image-name" hidden>
+                        <div class="uk-float-left">
+                            <button class="uk-button uk-button-default" type="button">
+                                <span class="uk-icon uk-margin-small-right" uk-icon="icon: image"></span>Открыть изображение
+                            </button>
+                            <div id="modal-image-name-view">
+                                <span class="uk-icon uk-margin-small-right" uk-icon="icon: server"></span>
+                                <span id="modal-image-title">Имя файла</span>
+                            </div>
+                        </div>
+                        <div><img id="modal-main-image" data-src="/" height="100px" uk-img></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button id="button-movie-delete" style="float: left;" class="uk-button uk-button-danger"><span
+                        class="uk-icon uk-margin-small-right" uk-icon="icon: trash;"></span>Удалить
+            </button>
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Отмена</button>
+            <button id="button-movie-save" class="uk-button uk-button-primary uk-modal-close">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<script src="ajax.min.js"></script>
+<script src="js/uikit.min.js"></script>
+<script src="js/uikit-icons.min.js"></script>
+<script src="js/dropzone.js"></script>
+<script src="plyr/plyr.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

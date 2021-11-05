@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Медиатека</title>
+    <link rel="stylesheet" href="css/uikit.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <style>
+        .uk-inline, .uk-inline > input {
+            width: 100%;
+        }
+        .uk-alert-danger{
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+    </style>
+</head>
+<body>
+<nav class="uk-navbar-container uk-margin" uk-navbar>
+    <div class="uk-navbar-left">
+
+        <a class="uk-navbar-item uk-logo" href="#"><span class="uk-icon uk-margin-small-right"
+                                                        uk-icon="icon: video-camera; ratio: 2"></span>Медиатека</a>
+    </div>
+</nav>
+<div id="auth-modal" class="uk-flex-top" uk-modal="esc-close: false; bg-close: false;">
+    <div class="uk-modal-dialog uk-margin-auto-vertical">
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">Авторизация</h2>
+        </div>
+        <div class="uk-modal-body">
+            <div class="uk-margin">
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                    <input id="login" class="uk-input" placeholder="Логин" type="text">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <div class="uk-inline">
+                    <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                    <input id="password" class="uk-input" onkeypress="post_enter(event)" placeholder="Пароль" type="password">
+                </div>
+            </div>
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-primary" id="button-login" type="button"><span
+                        class="uk-icon uk-margin-small-right"
+                        uk-icon="icon: arrow-right"></span>Войти
+            </button>
+        </div>
+        <div id="alert">
+
+        </div>
+    </div>
+</div>
+
+<script src="ajax.min.js"></script>
+<script src="js/uikit.min.js"></script>
+<script src="js/uikit-icons.min.js"></script>
+<script>
+    function post_enter(e)
+    {
+        if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            document.getElementById("button-login").click();
+            return false;
+        } else {
+            return true;
+        }
+    }
+    UIkit.modal(document.getElementById('auth-modal')).show();
+    UIkit.util.ready(function () {
+        document.getElementById('button-login').onclick = function () {
+            let login = document.getElementById('login').value;
+            let password = document.getElementById('password').value;
+            ajax().post('admin_auth', {"login": login, "password": password}).then(function (response) {
+                if(response["status"]==="ok") {
+                    window.location = "/";
+                }
+                else
+                {
+                    document.getElementById('alert').innerHTML='<div class="uk-alert-danger" uk-alert>\n' +
+                        '<a class="uk-alert-close" uk-close></a>\n' +
+                        '<p>Ошибка ввода логина и пароля!</p>\n' +
+                        '</div>';
+                }
+
+            }).catch(function (e) {
+                document.getElementById('alert').innerHTML='<div class="uk-alert-danger" uk-alert>\n' +
+                    '<a class="uk-alert-close" uk-close></a>\n' +
+                    '<p>Ошибка ввода логина и пароля!</p>\n' +
+                    '</div>';
+            });
+        };
+    });
+</script>
+</body>
+</html>
